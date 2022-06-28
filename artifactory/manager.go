@@ -191,6 +191,12 @@ func (sm *ArtifactoryServicesManagerImp) GetPermissionTarget(permissionTargetNam
 	return permissionTargetService.Get(permissionTargetName)
 }
 
+func (sm *ArtifactoryServicesManagerImp) GetPermissionTargets() ([]*services.PermissionTargetName, error) {
+	permissionTargetService := services.NewPermissionTargetService(sm.client)
+	permissionTargetService.ArtDetails = sm.config.GetServiceDetails()
+	return permissionTargetService.GetAllPermissions()
+}
+
 func (sm *ArtifactoryServicesManagerImp) PublishBuildInfo(build *buildinfo.BuildInfo, projectKey string) (*clientutils.Sha256Summary, error) {
 	buildInfoService := services.NewBuildInfoService(sm.config.GetServiceDetails(), sm.client)
 	buildInfoService.DryRun = sm.config.IsDryRun()

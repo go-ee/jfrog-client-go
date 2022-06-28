@@ -38,6 +38,7 @@ type ArtifactoryServicesManager interface {
 	UpdatePermissionTarget(params services.PermissionTargetParams) error
 	DeletePermissionTarget(permissionTargetName string) error
 	GetPermissionTarget(permissionTargetName string) (*services.PermissionTargetParams, error)
+	GetPermissionTargets() ([]*services.PermissionTargetName, error)
 	PublishBuildInfo(build *buildinfo.BuildInfo, projectKey string) (*clientutils.Sha256Summary, error)
 	DistributeBuild(params services.BuildDistributionParams) error
 	PromoteBuild(params services.PromotionParams) error
@@ -178,6 +179,10 @@ func (esm *EmptyArtifactoryServicesManager) DeletePermissionTarget(permissionTar
 }
 
 func (esm *EmptyArtifactoryServicesManager) GetPermissionTarget(permissionTargetName string) (*services.PermissionTargetParams, error) {
+	panic("Failed: Method is not implemented")
+}
+
+func (esm *EmptyArtifactoryServicesManager) GetPermissionTargets() ([]*services.PermissionTargetName, error) {
 	panic("Failed: Method is not implemented")
 }
 

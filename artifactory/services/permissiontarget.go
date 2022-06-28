@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
@@ -65,6 +66,23 @@ func (pts *PermissionTargetService) Get(permissionTargetName string) (*Permissio
 	return permissionTarget, nil
 }
 
+func (pts *PermissionTargetService) GetAllPermissions() ([]*PermissionTargetName, error) {
+	httpDetails := pts.ArtDetails.CreateHttpClientDetails()
+	url := fmt.Sprintf("%sapi/security/permissions", pts.ArtDetails.GetUrl())
+	resp, body, _, err := pts.client.SendGet(url, true, &httpDetails)
+	if err != nil {
+		return nil, err
+	}
+	if err = errorutils.CheckResponseStatus(resp, http.StatusOK); err != nil {
+		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
+	}
+	var permissionTargets []*PermissionTargetName
+	if err := json.Unmarshal(body, &permissionTargets); err != nil {
+		return nil, errorutils.CheckError(err)
+	}
+	return permissionTargets, nil
+}
+
 func (pts *PermissionTargetService) Create(params PermissionTargetParams) error {
 	return pts.performRequest(params, false)
 }
@@ -115,6 +133,11 @@ func NewPermissionTargetParams() PermissionTargetParams {
 
 // Using struct pointers to keep the fields null if they are empty.
 // Artifactory evaluates inner struct typed fields if they are not null, which can lead to failures in the request.
+type PermissionTargetName struct {
+	Name string `json:"name"`
+	Uri  string `json:"uri,omitempty"`
+}
+
 type PermissionTargetParams struct {
 	Name          string                   `json:"name"`
 	Repo          *PermissionTargetSection `json:"repo,omitempty"`
@@ -130,7 +153,7 @@ type PermissionTargetSection struct {
 }
 
 type Actions struct {
-	Users  map[string][]string `json:"users,omitempty"`
+	Users  map[string][]string `json:"permissionTargetParams,omitempty"`
 	Groups map[string][]string `json:"groups,omitempty"`
 }
 
