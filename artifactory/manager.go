@@ -191,7 +191,7 @@ func (sm *ArtifactoryServicesManagerImp) GetPermissionTarget(permissionTargetNam
 	return permissionTargetService.Get(permissionTargetName)
 }
 
-func (sm *ArtifactoryServicesManagerImp) GetPermissionTargets() ([]*services.PermissionTargetName, error) {
+func (sm *ArtifactoryServicesManagerImp) GetPermissionTargets() ([]*services.PermissionTargetParams, error) {
 	permissionTargetService := services.NewPermissionTargetService(sm.client)
 	permissionTargetService.ArtDetails = sm.config.GetServiceDetails()
 	return permissionTargetService.GetAllPermissions()
@@ -478,6 +478,12 @@ func (sm *ArtifactoryServicesManagerImp) ActivateKeyEncryption() error {
 func (sm *ArtifactoryServicesManagerImp) DeactivateKeyEncryption() error {
 	systemService := services.NewSystemService(sm.config.GetServiceDetails(), sm.client)
 	return systemService.DeactivateKeyEncryption()
+}
+
+func (sm *ArtifactoryServicesManagerImp) GetGroups() ([]*services.Group, error) {
+	groupService := services.NewGroupService(sm.client)
+	groupService.ArtDetails = sm.config.GetServiceDetails()
+	return groupService.GetGroups()
 }
 
 func (sm *ArtifactoryServicesManagerImp) GetGroup(params services.GroupParams) (*services.Group, error) {

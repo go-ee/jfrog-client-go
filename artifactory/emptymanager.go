@@ -38,7 +38,7 @@ type ArtifactoryServicesManager interface {
 	UpdatePermissionTarget(params services.PermissionTargetParams) error
 	DeletePermissionTarget(permissionTargetName string) error
 	GetPermissionTarget(permissionTargetName string) (*services.PermissionTargetParams, error)
-	GetPermissionTargets() ([]*services.PermissionTargetName, error)
+	GetPermissionTargets() ([]*services.PermissionTargetParams, error)
 	PublishBuildInfo(build *buildinfo.BuildInfo, projectKey string) (*clientutils.Sha256Summary, error)
 	DistributeBuild(params services.BuildDistributionParams) error
 	PromoteBuild(params services.PromotionParams) error
@@ -82,6 +82,7 @@ type ArtifactoryServicesManager interface {
 	DeactivateKeyEncryption() error
 	PromoteDocker(params services.DockerPromoteParams) error
 	Client() *jfroghttpclient.JfrogHttpClient
+	GetGroups() ([]*services.Group, error)
 	GetGroup(params services.GroupParams) (*services.Group, error)
 	CreateGroup(params services.GroupParams) error
 	UpdateGroup(params services.GroupParams) error
@@ -182,7 +183,7 @@ func (esm *EmptyArtifactoryServicesManager) GetPermissionTarget(permissionTarget
 	panic("Failed: Method is not implemented")
 }
 
-func (esm *EmptyArtifactoryServicesManager) GetPermissionTargets() ([]*services.PermissionTargetName, error) {
+func (esm *EmptyArtifactoryServicesManager) GetPermissionTargets() ([]*services.PermissionTargetParams, error) {
 	panic("Failed: Method is not implemented")
 }
 
@@ -383,6 +384,10 @@ func (esm *EmptyArtifactoryServicesManager) UpdateUser(params services.UserParam
 }
 
 func (esm *EmptyArtifactoryServicesManager) DeleteUser(name string) error {
+	panic("Failed: Method is not implemented")
+}
+
+func (esm *EmptyArtifactoryServicesManager) GetGroups() ([]*services.Group, error) {
 	panic("Failed: Method is not implemented")
 }
 

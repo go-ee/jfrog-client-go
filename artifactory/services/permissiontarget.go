@@ -66,7 +66,7 @@ func (pts *PermissionTargetService) Get(permissionTargetName string) (*Permissio
 	return permissionTarget, nil
 }
 
-func (pts *PermissionTargetService) GetAllPermissions() ([]*PermissionTargetName, error) {
+func (pts *PermissionTargetService) GetAllPermissions() ([]*PermissionTargetParams, error) {
 	httpDetails := pts.ArtDetails.CreateHttpClientDetails()
 	url := fmt.Sprintf("%sapi/security/permissions", pts.ArtDetails.GetUrl())
 	resp, body, _, err := pts.client.SendGet(url, true, &httpDetails)
@@ -76,7 +76,7 @@ func (pts *PermissionTargetService) GetAllPermissions() ([]*PermissionTargetName
 	if err = errorutils.CheckResponseStatus(resp, http.StatusOK); err != nil {
 		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
 	}
-	var permissionTargets []*PermissionTargetName
+	var permissionTargets []*PermissionTargetParams
 	if err := json.Unmarshal(body, &permissionTargets); err != nil {
 		return nil, errorutils.CheckError(err)
 	}
@@ -133,10 +133,6 @@ func NewPermissionTargetParams() PermissionTargetParams {
 
 // Using struct pointers to keep the fields null if they are empty.
 // Artifactory evaluates inner struct typed fields if they are not null, which can lead to failures in the request.
-type PermissionTargetName struct {
-	Name string `json:"name"`
-	Uri  string `json:"uri,omitempty"`
-}
 
 type PermissionTargetParams struct {
 	Name          string                   `json:"name"`
