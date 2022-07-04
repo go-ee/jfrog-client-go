@@ -42,6 +42,22 @@ type ProjectService struct {
 	ServiceDetails auth.ServiceDetails
 }
 
+type Role struct {
+	Name         string   `json:"name"`
+	Actions      []string `json:"actions"`
+	Type         string   `json:"type"`
+	Environments []string `json:"environments"`
+}
+
+type ProjectUser struct {
+	Name  string   `json:"name"`
+	Roles []string `json:"roles"`
+}
+
+type ProjectUsers struct {
+	Members []*ProjectUser `json:"members"`
+}
+
 type ProjectGroup struct {
 	Name  string   `json:"name"`
 	Roles []string `json:"roles"`
@@ -76,6 +92,102 @@ func (ps *ProjectService) Get(projectKey string) (u *Project, err error) {
 	var project Project
 	err = json.Unmarshal(body, &project)
 	return &project, errorutils.CheckError(err)
+}
+
+func (ps *ProjectService) GetRoles(projectKey string) ([]*Role, error) {
+	httpDetails := ps.ServiceDetails.CreateHttpClientDetails()
+	url := fmt.Sprintf("%s/%s/roles", ps.getProjectsBaseUrl(), projectKey)
+	resp, body, _, err := ps.client.SendGet(url, true, &httpDetails)
+	if err != nil {
+		return nil, err
+	}
+	// In case the requested roles is not found
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, nil
+	}
+	if err = errorutils.CheckResponseStatus(resp, http.StatusOK); err != nil {
+		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
+	}
+	var roles []*Role
+	err = json.Unmarshal(body, &roles)
+	return roles, errorutils.CheckError(err)
+}
+
+func (ps *ProjectService) CreateRole(projectKey string, role *Role) error {
+	content, httpDetails, err := ps.createOrUpdateRequestRole(role)
+	if err != nil {
+		return err
+	}
+	url := fmt.Sprintf("%s/%s/roles", ps.getProjectsBaseUrl(), projectKey)
+	resp, body, err := ps.client.SendPost(url, content, &httpDetails)
+	if err != nil {
+		return err
+	}
+	if err = errorutils.CheckResponseStatus(resp, http.StatusOK, http.StatusCreated); err != nil {
+		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
+	}
+	return nil
+}
+
+func (ps *ProjectService) GetUsers(projectKey string) (*ProjectUsers, error) {
+	httpDetails := ps.ServiceDetails.CreateHttpClientDetails()
+	url := fmt.Sprintf("%s/%s/users", ps.getProjectsBaseUrl(), projectKey)
+	resp, body, _, err := ps.client.SendGet(url, true, &httpDetails)
+	if err != nil {
+		return nil, err
+	}
+	// In case the requested users is not found
+	if resp.StatusCode == http.StatusNotFound {
+		return nil, nil
+	}
+	if err = errorutils.CheckResponseStatus(resp, http.StatusOK); err != nil {
+		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
+	}
+	var users *ProjectUsers
+	err = json.Unmarshal(body, &users)
+	return users, errorutils.CheckError(err)
+}
+
+func (ps *ProjectService) UpdateUser(projectKey string, user *ProjectUser) error {
+	content, httpDetails, err := ps.createOrUpdateRequestUser(user)
+	if err != nil {
+		return err
+	}
+	url := fmt.Sprintf("%s/%s/users/%s", ps.getProjectsBaseUrl(), projectKey, user.Name)
+	resp, body, err := ps.client.SendPut(url, content, &httpDetails)
+	if err != nil {
+		return err
+	}
+	if err = errorutils.CheckResponseStatus(resp, http.StatusOK, http.StatusCreated); err != nil {
+		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
+	}
+	return nil
+}
+
+func (ps *ProjectService) createOrUpdateRequestRole(role *Role) (requestContent []byte, httpDetails httputils.HttpClientDetails, err error) {
+	httpDetails = ps.ServiceDetails.CreateHttpClientDetails()
+	requestContent, err = json.Marshal(role)
+	if errorutils.CheckError(err) != nil {
+		return
+	}
+	httpDetails.Headers = map[string]string{
+		"Content-Type": "application/json",
+		"Accept":       "application/json",
+	}
+	return
+}
+
+func (ps *ProjectService) createOrUpdateRequestUser(user *ProjectUser) (requestContent []byte, httpDetails httputils.HttpClientDetails, err error) {
+	httpDetails = ps.ServiceDetails.CreateHttpClientDetails()
+	requestContent, err = json.Marshal(user)
+	if errorutils.CheckError(err) != nil {
+		return
+	}
+	httpDetails.Headers = map[string]string{
+		"Content-Type": "application/json",
+		"Accept":       "application/json",
+	}
+	return
 }
 
 func (ps *ProjectService) GetAllProjects() ([]*Project, error) {
