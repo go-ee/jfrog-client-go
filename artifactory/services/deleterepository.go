@@ -34,6 +34,6 @@ func (drs *DeleteRepositoryService) Delete(repoKey string) error {
 		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
 	}
 	log.Debug("Artifactory response:", resp.Status)
-	log.Info("Done deleting repository.")
+	log.Debug("Done deleting repository.")
 	return nil
 }

@@ -40,7 +40,7 @@ func (ss *SourcesService) AddSource(projectIntegrationId int, repositoryFullName
 }
 
 func (ss *SourcesService) doAddSource(source Source) (id int, err error) {
-	log.Debug("Adding Pipeline Source...")
+	log.Debug("Adding Pipeline Server...")
 	content, err := json.Marshal(source)
 	if err != nil {
 		return -1, errorutils.CheckError(err)
@@ -116,5 +116,5 @@ type SourceAlreadyExistsError struct {
 }
 
 func (*SourceAlreadyExistsError) Error() string {
-	return "Pipelines: Pipeline Source already exists."
+	return "Pipelines: Pipeline Server already exists."
 }

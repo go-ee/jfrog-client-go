@@ -35,7 +35,7 @@ func (rs *CreateReplicationService) performRequest(params *utils.UpdateReplicati
 	var url = rs.ArtDetails.GetUrl() + "api/replications/" + params.RepoKey
 	var resp *http.Response
 	var body []byte
-	log.Info("Creating replication..")
+	log.Debug("Creating replication..")
 	operationString := "creating"
 	resp, body, err = rs.client.SendPut(url, content, &httpClientsDetails)
 	if err != nil {
@@ -45,7 +45,7 @@ func (rs *CreateReplicationService) performRequest(params *utils.UpdateReplicati
 		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
 	}
 	log.Debug("Artifactory response:", resp.Status)
-	log.Info("Done " + operationString + " repository.")
+	log.Debug("Done " + operationString + " repository.")
 	return nil
 }
 

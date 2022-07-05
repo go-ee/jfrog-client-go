@@ -35,6 +35,6 @@ func (drs *DeleteReplicationService) DeleteReplication(repoKey string) error {
 		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
 	}
 	log.Debug("Artifactory response:", resp.Status)
-	log.Info("Done Deleting replication job.")
+	log.Debug("Done Deleting replication job.")
 	return nil
 }
