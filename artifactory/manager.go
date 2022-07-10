@@ -465,6 +465,11 @@ func (sm *ArtifactoryServicesManagerImp) GetServiceId() (string, error) {
 	return systemService.GetServiceId()
 }
 
+func (sm *ArtifactoryServicesManagerImp) GetRunningNodes() ([]string, error) {
+	systemService := services.NewSystemService(sm.config.GetServiceDetails(), sm.client)
+	return systemService.GetRunningNodes()
+}
+
 func (sm *ArtifactoryServicesManagerImp) GetConfigDescriptor() (string, error) {
 	systemService := services.NewSystemService(sm.config.GetServiceDetails(), sm.client)
 	return systemService.GetConfigDescriptor()
