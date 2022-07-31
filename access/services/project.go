@@ -7,7 +7,6 @@ import (
 
 	"github.com/jfrog/jfrog-client-go/auth"
 	"github.com/jfrog/jfrog-client-go/http/jfroghttpclient"
-	clientutils "github.com/jfrog/jfrog-client-go/utils"
 	"github.com/jfrog/jfrog-client-go/utils/errorutils"
 	"github.com/jfrog/jfrog-client-go/utils/io/httputils"
 )
@@ -86,8 +85,8 @@ func (ps *ProjectService) Get(projectKey string) (u *Project, err error) {
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil
 	}
-	if err = errorutils.CheckResponseStatus(resp, http.StatusOK); err != nil {
-		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
+	if err = errorutils.CheckResponseStatus(resp, body, http.StatusOK); err != nil {
+		return nil, err
 	}
 	var project Project
 	err = json.Unmarshal(body, &project)
@@ -223,10 +222,7 @@ func (ps *ProjectService) Create(params ProjectParams) error {
 	if err != nil {
 		return err
 	}
-	if err = errorutils.CheckResponseStatus(resp, http.StatusOK, http.StatusCreated); err != nil {
-		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
-	}
-	return nil
+	return errorutils.CheckResponseStatus(resp, body, http.StatusOK, http.StatusCreated)
 }
 
 func (ps *ProjectService) Update(params ProjectParams) error {
@@ -239,10 +235,7 @@ func (ps *ProjectService) Update(params ProjectParams) error {
 	if err != nil {
 		return err
 	}
-	if err = errorutils.CheckResponseStatus(resp, http.StatusOK, http.StatusCreated); err != nil {
-		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
-	}
-	return nil
+	return errorutils.CheckResponseStatus(resp, body, http.StatusOK, http.StatusCreated)
 }
 
 func (ps *ProjectService) createOrUpdateRequest(project Project) (requestContent []byte, httpDetails httputils.HttpClientDetails, err error) {
@@ -268,10 +261,7 @@ func (ps *ProjectService) Delete(projectKey string) error {
 	if resp == nil {
 		return errorutils.CheckErrorf("no response provided (including status code)")
 	}
-	if err = errorutils.CheckResponseStatus(resp, http.StatusNoContent); err != nil {
-		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
-	}
-	return err
+	return errorutils.CheckResponseStatus(resp, body, http.StatusNoContent)
 }
 
 func (ps *ProjectService) AssignRepo(repoName, projectKey string, isForce bool) error {
@@ -281,10 +271,7 @@ func (ps *ProjectService) AssignRepo(repoName, projectKey string, isForce bool) 
 	if err != nil {
 		return err
 	}
-	if err = errorutils.CheckResponseStatus(resp, http.StatusOK, http.StatusNoContent); err != nil {
-		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
-	}
-	return nil
+	return errorutils.CheckResponseStatus(resp, body, http.StatusOK, http.StatusNoContent)
 }
 
 func (ps *ProjectService) UnassignRepo(repoName string) error {
@@ -294,10 +281,7 @@ func (ps *ProjectService) UnassignRepo(repoName string) error {
 	if err != nil {
 		return err
 	}
-	if err = errorutils.CheckResponseStatus(resp, http.StatusOK, http.StatusNoContent); err != nil {
-		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
-	}
-	return nil
+	return errorutils.CheckResponseStatus(resp, body, http.StatusOK, http.StatusNoContent)
 }
 
 func (ps *ProjectService) GetGroups(projectKey string) (*[]ProjectGroup, error) {
@@ -311,8 +295,8 @@ func (ps *ProjectService) GetGroups(projectKey string) (*[]ProjectGroup, error) 
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil
 	}
-	if err = errorutils.CheckResponseStatus(resp, http.StatusOK); err != nil {
-		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
+	if err = errorutils.CheckResponseStatus(resp, body, http.StatusOK); err != nil {
+		return nil, err
 	}
 	var projectGroups ProjectGroups
 	err = json.Unmarshal(body, &projectGroups)
@@ -330,8 +314,8 @@ func (ps *ProjectService) GetGroup(projectKey string, groupName string) (*Projec
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil
 	}
-	if err = errorutils.CheckResponseStatus(resp, http.StatusOK); err != nil {
-		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
+	if err = errorutils.CheckResponseStatus(resp, body, http.StatusOK); err != nil {
+		return nil, err
 	}
 	var projectGroup ProjectGroup
 	err = json.Unmarshal(body, &projectGroup)
@@ -353,10 +337,7 @@ func (ps *ProjectService) UpdateGroup(projectKey string, groupName string, group
 	if err != nil {
 		return err
 	}
-	if err = errorutils.CheckResponseStatus(resp, http.StatusOK); err != nil {
-		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
-	}
-	return nil
+	return errorutils.CheckResponseStatus(resp, body, http.StatusOK)
 }
 
 func (ps *ProjectService) DeleteExistingGroup(projectKey string, groupName string) error {
@@ -366,8 +347,5 @@ func (ps *ProjectService) DeleteExistingGroup(projectKey string, groupName strin
 	if err != nil {
 		return err
 	}
-	if err = errorutils.CheckResponseStatus(resp, http.StatusNoContent); err != nil {
-		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
-	}
-	return nil
+	return errorutils.CheckResponseStatus(resp, body, http.StatusNoContent)
 }
