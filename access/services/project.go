@@ -85,7 +85,7 @@ func (ps *ProjectService) Get(projectKey string) (u *Project, err error) {
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil
 	}
-	if err = errorutils.CheckResponseStatus(resp, body, http.StatusOK); err != nil {
+	if err = errorutils.CheckResponseStatusWithBody(resp, body, http.StatusOK); err != nil {
 		return nil, err
 	}
 	var project Project
@@ -222,7 +222,7 @@ func (ps *ProjectService) Create(params ProjectParams) error {
 	if err != nil {
 		return err
 	}
-	return errorutils.CheckResponseStatus(resp, body, http.StatusOK, http.StatusCreated)
+	return errorutils.CheckResponseStatusWithBody(resp, body, http.StatusOK, http.StatusCreated)
 }
 
 func (ps *ProjectService) Update(params ProjectParams) error {
@@ -235,7 +235,7 @@ func (ps *ProjectService) Update(params ProjectParams) error {
 	if err != nil {
 		return err
 	}
-	return errorutils.CheckResponseStatus(resp, body, http.StatusOK, http.StatusCreated)
+	return errorutils.CheckResponseStatusWithBody(resp, body, http.StatusOK, http.StatusCreated)
 }
 
 func (ps *ProjectService) createOrUpdateRequest(project Project) (requestContent []byte, httpDetails httputils.HttpClientDetails, err error) {
@@ -261,7 +261,7 @@ func (ps *ProjectService) Delete(projectKey string) error {
 	if resp == nil {
 		return errorutils.CheckErrorf("no response provided (including status code)")
 	}
-	return errorutils.CheckResponseStatus(resp, body, http.StatusNoContent)
+	return errorutils.CheckResponseStatusWithBody(resp, body, http.StatusNoContent)
 }
 
 func (ps *ProjectService) AssignRepo(repoName, projectKey string, isForce bool) error {
@@ -271,7 +271,7 @@ func (ps *ProjectService) AssignRepo(repoName, projectKey string, isForce bool) 
 	if err != nil {
 		return err
 	}
-	return errorutils.CheckResponseStatus(resp, body, http.StatusOK, http.StatusNoContent)
+	return errorutils.CheckResponseStatusWithBody(resp, body, http.StatusOK, http.StatusNoContent)
 }
 
 func (ps *ProjectService) UnassignRepo(repoName string) error {
@@ -281,7 +281,7 @@ func (ps *ProjectService) UnassignRepo(repoName string) error {
 	if err != nil {
 		return err
 	}
-	return errorutils.CheckResponseStatus(resp, body, http.StatusOK, http.StatusNoContent)
+	return errorutils.CheckResponseStatusWithBody(resp, body, http.StatusOK, http.StatusNoContent)
 }
 
 func (ps *ProjectService) GetGroups(projectKey string) (*[]ProjectGroup, error) {
@@ -295,7 +295,7 @@ func (ps *ProjectService) GetGroups(projectKey string) (*[]ProjectGroup, error) 
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil
 	}
-	if err = errorutils.CheckResponseStatus(resp, body, http.StatusOK); err != nil {
+	if err = errorutils.CheckResponseStatusWithBody(resp, body, http.StatusOK); err != nil {
 		return nil, err
 	}
 	var projectGroups ProjectGroups
@@ -314,7 +314,7 @@ func (ps *ProjectService) GetGroup(projectKey string, groupName string) (*Projec
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil
 	}
-	if err = errorutils.CheckResponseStatus(resp, body, http.StatusOK); err != nil {
+	if err = errorutils.CheckResponseStatusWithBody(resp, body, http.StatusOK); err != nil {
 		return nil, err
 	}
 	var projectGroup ProjectGroup
@@ -337,7 +337,7 @@ func (ps *ProjectService) UpdateGroup(projectKey string, groupName string, group
 	if err != nil {
 		return err
 	}
-	return errorutils.CheckResponseStatus(resp, body, http.StatusOK)
+	return errorutils.CheckResponseStatusWithBody(resp, body, http.StatusOK)
 }
 
 func (ps *ProjectService) DeleteExistingGroup(projectKey string, groupName string) error {
@@ -347,5 +347,5 @@ func (ps *ProjectService) DeleteExistingGroup(projectKey string, groupName strin
 	if err != nil {
 		return err
 	}
-	return errorutils.CheckResponseStatus(resp, body, http.StatusNoContent)
+	return errorutils.CheckResponseStatusWithBody(resp, body, http.StatusNoContent)
 }

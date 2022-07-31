@@ -73,7 +73,7 @@ func (gs *GroupService) GetGroup(params GroupParams) (g *Group, err error) {
 	if resp.StatusCode == http.StatusNotFound {
 		return nil, nil
 	}
-	if err = errorutils.CheckResponseStatus(resp, body, http.StatusOK); err != nil {
+	if err = errorutils.CheckResponseStatusWithBody(resp, body, http.StatusOK); err != nil {
 		return nil, err
 	}
 	var group Group
@@ -103,7 +103,7 @@ func (gs *GroupService) CreateGroup(params GroupParams) error {
 	if err != nil {
 		return err
 	}
-	return errorutils.CheckResponseStatus(resp, body, http.StatusOK, http.StatusCreated)
+	return errorutils.CheckResponseStatusWithBody(resp, body, http.StatusOK, http.StatusCreated)
 }
 
 type GroupAlreadyExistsError struct {
@@ -123,7 +123,7 @@ func (gs *GroupService) UpdateGroup(params GroupParams) error {
 	if err != nil {
 		return err
 	}
-	return errorutils.CheckResponseStatus(resp, body, http.StatusOK)
+	return errorutils.CheckResponseStatusWithBody(resp, body, http.StatusOK)
 }
 
 func (gs *GroupService) createOrUpdateGroupRequest(group Group) (url string, requestContent []byte, httpDetails httputils.HttpClientDetails, err error) {
@@ -151,5 +151,5 @@ func (gs *GroupService) DeleteGroup(name string) error {
 	if resp == nil {
 		return errorutils.CheckErrorf("no response provided (including status code)")
 	}
-	return errorutils.CheckResponseStatus(resp, body, http.StatusOK)
+	return errorutils.CheckResponseStatusWithBody(resp, body, http.StatusOK)
 }
