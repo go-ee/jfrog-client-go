@@ -32,7 +32,7 @@ type ReplicationParams struct {
 	Password string
 	Url      string
 	CronExp  string
-	// Server replication repository.
+	// Source replication repository.
 	RepoKey                string
 	Proxy                  string
 	EnableEventReplication bool
