@@ -44,7 +44,7 @@ func (pts *PermissionTargetService) Delete(permissionTargetName string) error {
 
 func (pts *PermissionTargetService) Get(permissionTargetName string) (*PermissionTargetParams, error) {
 	httpClientsDetails := pts.ArtDetails.CreateHttpClientDetails()
-	log.Info("Getting permission target...")
+	log.Debug("Getting permission target...")
 	resp, body, _, err := pts.client.SendGet(pts.ArtDetails.GetUrl()+"api/v2/security/permissions/"+permissionTargetName, true, &httpClientsDetails)
 	if err != nil {
 		return nil, err
