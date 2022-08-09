@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
-
 	"github.com/jfrog/jfrog-client-go/auth"
 	"github.com/jfrog/jfrog-client-go/http/jfroghttpclient"
+	"github.com/jfrog/jfrog-client-go/utils"
 	"github.com/jfrog/jfrog-client-go/utils/errorutils"
 	"github.com/jfrog/jfrog-client-go/utils/io/httputils"
+	"net/http"
 )
 
 type GroupParams struct {
@@ -53,7 +53,7 @@ func (gs *GroupService) GetGroups() (g []*Group, err error) {
 		return nil, err
 	}
 	if err = errorutils.CheckResponseStatus(resp, http.StatusOK); err != nil {
-		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
+		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, utils.IndentJson(body)))
 	}
 	var groups []*Group
 	if err := json.Unmarshal(body, &groups); err != nil {

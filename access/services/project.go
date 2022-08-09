@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/jfrog/jfrog-client-go/utils"
 	"net/http"
 
 	"github.com/jfrog/jfrog-client-go/auth"
@@ -105,7 +106,7 @@ func (ps *ProjectService) GetRoles(projectKey string) ([]*Role, error) {
 		return nil, nil
 	}
 	if err = errorutils.CheckResponseStatus(resp, http.StatusOK); err != nil {
-		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
+		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, utils.IndentJson(body)))
 	}
 	var roles []*Role
 	err = json.Unmarshal(body, &roles)
@@ -123,7 +124,7 @@ func (ps *ProjectService) CreateRole(projectKey string, role *Role) error {
 		return err
 	}
 	if err = errorutils.CheckResponseStatus(resp, http.StatusOK, http.StatusCreated); err != nil {
-		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
+		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, utils.IndentJson(body)))
 	}
 	return nil
 }
@@ -140,7 +141,7 @@ func (ps *ProjectService) GetUsers(projectKey string) (*ProjectUsers, error) {
 		return nil, nil
 	}
 	if err = errorutils.CheckResponseStatus(resp, http.StatusOK); err != nil {
-		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
+		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, utils.IndentJson(body)))
 	}
 	var users *ProjectUsers
 	err = json.Unmarshal(body, &users)
@@ -158,7 +159,7 @@ func (ps *ProjectService) UpdateUser(projectKey string, user *ProjectUser) error
 		return err
 	}
 	if err = errorutils.CheckResponseStatus(resp, http.StatusOK, http.StatusCreated); err != nil {
-		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
+		return errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, utils.IndentJson(body)))
 	}
 	return nil
 }
@@ -197,7 +198,7 @@ func (ps *ProjectService) GetAllProjects() ([]*Project, error) {
 		return nil, err
 	}
 	if err = errorutils.CheckResponseStatus(resp, http.StatusOK); err != nil {
-		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
+		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, utils.IndentJson(body)))
 	}
 	var projects []*Project
 	if err := json.Unmarshal(body, &projects); err != nil {

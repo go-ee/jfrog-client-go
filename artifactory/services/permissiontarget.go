@@ -3,9 +3,9 @@ package services
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
-
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
+	clientutils "github.com/jfrog/jfrog-client-go/utils"
+	"net/http"
 
 	"github.com/jfrog/jfrog-client-go/auth"
 	"github.com/jfrog/jfrog-client-go/http/jfroghttpclient"
