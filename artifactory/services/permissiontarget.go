@@ -147,7 +147,7 @@ type PermissionTargetSection struct {
 }
 
 type Actions struct {
-	Users  map[string][]string `json:"permissionTargetParams,omitempty"`
+	Users  map[string][]string `json:"users,omitempty"`
 	Groups map[string][]string `json:"groups,omitempty"`
 }
 
