@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/jfrog/jfrog-client-go/utils"
 	"net/http"
 
 	"github.com/jfrog/jfrog-client-go/auth"
@@ -49,32 +50,24 @@ func (gs *GroupService) SetArtifactoryDetails(rt auth.ServiceDetails) {
 	gs.ArtDetails = rt
 }
 
-func (gs *GroupService) GetAllGroups() (*[]string, error) {
+func (gs *GroupService) GetGroups() (g []*Group, err error) {
 	httpDetails := gs.ArtDetails.CreateHttpClientDetails()
 	url := fmt.Sprintf("%sapi/security/groups", gs.ArtDetails.GetUrl())
 	resp, body, _, err := gs.client.SendGet(url, true, &httpDetails)
 	if err != nil {
 		return nil, err
 	}
-
 	if err = errorutils.CheckResponseStatus(resp, http.StatusOK); err != nil {
-		return nil, err
+		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, utils.IndentJson(body)))
 	}
-	var groupNames []groupName
-	if err = json.Unmarshal(body, &groupNames); err != nil {
+	var groups []*Group
+	if err := json.Unmarshal(body, &groups); err != nil {
 		return nil, errorutils.CheckError(err)
 	}
-
-	// Flatten the output
-	var groups []string
-	for _, group := range groupNames {
-		groups = append(groups, group.Name)
-	}
-
-	return &groups, nil
+	return groups, nil
 }
 
-func (gs *GroupService) GetGroup(params GroupParams) (*Group, error) {
+func (gs *GroupService) GetGroup(params GroupParams) (g *Group, err error) {
 	httpDetails := gs.ArtDetails.CreateHttpClientDetails()
 	url := fmt.Sprintf("%sapi/security/groups/%s?includeUsers=%t", gs.ArtDetails.GetUrl(), params.GroupDetails.Name, params.IncludeUsers)
 	resp, body, _, err := gs.client.SendGet(url, true, &httpDetails)
@@ -89,7 +82,7 @@ func (gs *GroupService) GetGroup(params GroupParams) (*Group, error) {
 		return nil, err
 	}
 	var group Group
-	if err = json.Unmarshal(body, &group); err != nil {
+	if err := json.Unmarshal(body, &group); err != nil {
 		return nil, errorutils.CheckError(err)
 	}
 	return &group, nil

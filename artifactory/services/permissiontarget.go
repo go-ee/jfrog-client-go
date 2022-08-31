@@ -2,6 +2,8 @@ package services
 
 import (
 	"encoding/json"
+	"fmt"
+	clientutils "github.com/jfrog/jfrog-client-go/utils"
 	"net/http"
 
 	"github.com/jfrog/jfrog-client-go/artifactory/services/utils"
@@ -62,6 +64,23 @@ func (pts *PermissionTargetService) Get(permissionTargetName string) (*Permissio
 		return nil, err
 	}
 	return permissionTarget, nil
+}
+
+func (pts *PermissionTargetService) GetPermissions() ([]*PermissionTargetParams, error) {
+	httpDetails := pts.ArtDetails.CreateHttpClientDetails()
+	url := fmt.Sprintf("%sapi/security/permissions", pts.ArtDetails.GetUrl())
+	resp, body, _, err := pts.client.SendGet(url, true, &httpDetails)
+	if err != nil {
+		return nil, err
+	}
+	if err = errorutils.CheckResponseStatus(resp, http.StatusOK); err != nil {
+		return nil, errorutils.CheckError(errorutils.GenerateResponseError(resp.Status, clientutils.IndentJson(body)))
+	}
+	var permissionTargets []*PermissionTargetParams
+	if err := json.Unmarshal(body, &permissionTargets); err != nil {
+		return nil, errorutils.CheckError(err)
+	}
+	return permissionTargets, nil
 }
 
 func (pts *PermissionTargetService) Create(params PermissionTargetParams) error {

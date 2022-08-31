@@ -192,6 +192,12 @@ func (sm *ArtifactoryServicesManagerImp) GetPermissionTarget(permissionTargetNam
 	return permissionTargetService.Get(permissionTargetName)
 }
 
+func (sm *ArtifactoryServicesManagerImp) GetPermissionTargets() ([]*services.PermissionTargetParams, error) {
+	permissionTargetService := services.NewPermissionTargetService(sm.client)
+	permissionTargetService.ArtDetails = sm.config.GetServiceDetails()
+	return permissionTargetService.GetPermissions()
+}
+
 func (sm *ArtifactoryServicesManagerImp) PublishBuildInfo(build *buildinfo.BuildInfo, projectKey string) (*clientutils.Sha256Summary, error) {
 	buildInfoService := services.NewBuildInfoService(sm.config.GetServiceDetails(), sm.client)
 	buildInfoService.DryRun = sm.config.IsDryRun()
@@ -480,16 +486,16 @@ func (sm *ArtifactoryServicesManagerImp) DeactivateKeyEncryption() error {
 	return systemService.DeactivateKeyEncryption()
 }
 
+func (sm *ArtifactoryServicesManagerImp) GetGroups() ([]*services.Group, error) {
+	groupService := services.NewGroupService(sm.client)
+	groupService.ArtDetails = sm.config.GetServiceDetails()
+	return groupService.GetGroups()
+}
+
 func (sm *ArtifactoryServicesManagerImp) GetGroup(params services.GroupParams) (*services.Group, error) {
 	groupService := services.NewGroupService(sm.client)
 	groupService.ArtDetails = sm.config.GetServiceDetails()
 	return groupService.GetGroup(params)
-}
-
-func (sm *ArtifactoryServicesManagerImp) GetAllGroups() (*[]string, error) {
-	groupService := services.NewGroupService(sm.client)
-	groupService.ArtDetails = sm.config.GetServiceDetails()
-	return groupService.GetAllGroups()
 }
 
 func (sm *ArtifactoryServicesManagerImp) CreateGroup(params services.GroupParams) error {
