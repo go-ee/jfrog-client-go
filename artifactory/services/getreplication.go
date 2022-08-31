@@ -44,7 +44,7 @@ func (drs *GetReplicationService) GetReplication(repoKey string) ([]utils.Replic
 
 func (drs *GetReplicationService) preform(repoKey string) ([]byte, error) {
 	httpClientsDetails := drs.ArtDetails.CreateHttpClientDetails()
-	log.Info("Retrieve replication configuration...")
+	log.Debug("Retrieve replication configuration...")
 	resp, body, _, err := drs.client.SendGet(drs.ArtDetails.GetUrl()+"api/replications/"+repoKey, true, &httpClientsDetails)
 	if err != nil {
 		return nil, err
@@ -53,6 +53,6 @@ func (drs *GetReplicationService) preform(repoKey string) ([]byte, error) {
 		return nil, err
 	}
 	log.Debug("Artifactory response:", resp.Status)
-	log.Info("Done retrieve replication job.")
+	log.Debug("Done retrieve replication job.")
 	return body, nil
 }
